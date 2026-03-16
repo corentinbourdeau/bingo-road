@@ -132,30 +132,9 @@ Dans le panneau Vercel de votre projet :
    - `VITE_SUPABASE_ANON_KEY` → votre clé anon Supabase
 3. Cliquez **Save** puis **Redeploy**.
 
-### Étape 4 : Configurer les origines autorisées Supabase
-
-1. Dans Supabase, allez dans **Authentication > URL Configuration**.
-2. Dans **"Allowed redirect URLs"** et **"Site URL"**, ajoutez votre domaine Vercel (ex: `https://bingo-road.vercel.app`).
-3. Cliquez **Save**.
-
 ---
 
-## 5. Activer le Realtime dans Supabase
-
-Pour que les mises à jour s'affichent en temps réel pour tous les joueurs :
-
-1. Dans Supabase, allez dans **Database > Replication** (ou **Realtime**).
-2. Activez la réplication pour les tables :
-   - `spotted_plates`
-   - `players`
-   - `games` (optionnel, pour le changement de statut)
-3. Cliquez **Save**.
-
-> Sans cette étape, l'application fonctionne mais les joueurs doivent recharger la page pour voir les nouvelles plaques.
-
----
-
-## 6. Tips PWA (optionnel)
+## 5. Tips PWA (optionnel)
 
 L'application est déjà optimisée pour mobile grâce aux balises meta dans `index.html` :
 
@@ -171,7 +150,7 @@ npm install -D vite-plugin-pwa
 
 ---
 
-## 7. Structure des données
+## 6. Structure des données
 
 | Table | Description |
 |-------|-------------|

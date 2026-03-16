@@ -1,8 +1,9 @@
-import { Box, ListItemButton, Typography, Chip } from '@mui/material'
+import { Box, ListItemButton, Typography, Chip, Button } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import CloseIcon from '@mui/icons-material/Close'
 
-export default function PlateItem({ department, spottedBy, onSpot, isActive, isCurrentPlayer }) {
+export default function PlateItem({ department, spottedBy, onSpot, onUnspot, isActive }) {
   const isSpotted = Boolean(spottedBy)
 
   const handleClick = () => {
@@ -11,10 +12,16 @@ export default function PlateItem({ department, spottedBy, onSpot, isActive, isC
     }
   }
 
+  const handleUnspot = (e) => {
+    e.stopPropagation()
+    if (onUnspot) onUnspot(department.code)
+  }
+
   return (
     <ListItemButton
       onClick={handleClick}
-      disabled={isSpotted || !isActive}
+      // Never disable when spotted — otherwise pointer-events:none blocks child buttons
+      disabled={!isSpotted && !isActive}
       disableRipple={isSpotted}
       sx={{
         minHeight: 56,
@@ -25,16 +32,11 @@ export default function PlateItem({ department, spottedBy, onSpot, isActive, isC
         bgcolor: isSpotted ? 'success.50' : 'background.paper',
         border: '1px solid',
         borderColor: isSpotted ? 'success.200' : 'divider',
+        cursor: isSpotted ? 'default' : isActive ? 'pointer' : 'default',
         '&:hover': isSpotted
           ? {}
-          : {
-              bgcolor: isActive ? 'primary.50' : 'background.paper',
-              borderColor: isActive ? 'primary.300' : 'divider',
-            },
-        '&.Mui-disabled': {
-          opacity: isSpotted ? 1 : 0.5,
-        },
-        cursor: isSpotted || !isActive ? 'default' : 'pointer',
+          : { bgcolor: isActive ? 'primary.50' : 'background.paper', borderColor: isActive ? 'primary.300' : 'divider' },
+        '&.Mui-disabled': { opacity: 0.5 },
         transition: 'all 0.15s ease',
       }}
     >
@@ -83,32 +85,47 @@ export default function PlateItem({ department, spottedBy, onSpot, isActive, isC
       </Box>
 
       {/* Status indicator */}
-      <Box sx={{ ml: 1, flexShrink: 0 }}>
+      <Box sx={{ ml: 1, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 0.5 }}>
         {isSpotted ? (
-          <Chip
-            icon={<CheckCircleIcon sx={{ fontSize: '1rem !important' }} />}
-            label={spottedBy}
-            size="small"
-            color="success"
-            variant="filled"
-            sx={{
-              height: 24,
-              fontSize: '0.7rem',
-              fontWeight: 600,
-              maxWidth: 120,
-              '& .MuiChip-label': {
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              },
-            }}
-          />
+          <>
+            <Chip
+              icon={<CheckCircleIcon sx={{ fontSize: '1rem !important' }} />}
+              label={spottedBy}
+              size="small"
+              color="success"
+              variant="filled"
+              sx={{
+                height: 24,
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                maxWidth: 110,
+                '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
+              }}
+            />
+            {isActive && (
+              <Button
+                size="small"
+                variant="outlined"
+                color="error"
+                onClick={handleUnspot}
+                startIcon={<CloseIcon sx={{ fontSize: '0.85rem !important' }} />}
+                sx={{
+                  minWidth: 0,
+                  px: 0.75,
+                  py: 0.25,
+                  fontSize: '0.7rem',
+                  height: 24,
+                  lineHeight: 1,
+                  borderRadius: 1.5,
+                  '& .MuiButton-startIcon': { mr: 0.25 },
+                }}
+              >
+                Annuler
+              </Button>
+            )}
+          </>
         ) : (
-          <RadioButtonUncheckedIcon
-            sx={{
-              color: isActive ? 'grey.400' : 'grey.300',
-              fontSize: '1.2rem',
-            }}
-          />
+          <RadioButtonUncheckedIcon sx={{ color: isActive ? 'grey.400' : 'grey.300', fontSize: '1.2rem' }} />
         )}
       </Box>
     </ListItemButton>

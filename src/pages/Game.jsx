@@ -21,6 +21,7 @@ import PeopleIcon from '@mui/icons-material/People'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import ShareIcon from '@mui/icons-material/Share'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import PlateList from '../components/PlateList'
 import FranceMap from '../components/FranceMap'
 import ScoreBoard from '../components/ScoreBoard'
@@ -39,7 +40,7 @@ export default function Game() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' })
   const [codeCopied, setCodeCopied] = useState(false)
 
-  const { game, players, spottedPlates, loading, error, spotPlate, finishGame } = useGame(code)
+  const { game, players, spottedPlates, loading, refreshing, error, refresh, spotPlate, unspotPlate, finishGame } = useGame(code)
 
   // Redirect if no player session for this game
   useEffect(() => {
@@ -87,6 +88,13 @@ export default function Game() {
     await navigator.clipboard.writeText(code)
     setCodeCopied(true)
     setTimeout(() => setCodeCopied(false), 2000)
+  }
+
+  const handleUnspotPlate = async (departmentCode) => {
+    const { error: unspotError } = await unspotPlate(departmentCode)
+    if (unspotError) {
+      setSnackbar({ open: true, message: unspotError, severity: 'error' })
+    }
   }
 
   const handleOpenStats = () => {
@@ -184,6 +192,11 @@ export default function Game() {
             }}
           />
 
+          {/* Refresh button */}
+          <IconButton color="inherit" onClick={refresh} size="small" disabled={refreshing}>
+            <RefreshIcon sx={{ animation: refreshing ? 'spin 0.8s linear infinite' : 'none', '@keyframes spin': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } } }} />
+          </IconButton>
+
           {/* Share button */}
           <IconButton color="inherit" onClick={handleShare} size="small">
             <ShareIcon />
@@ -211,6 +224,7 @@ export default function Game() {
             <PlateList
               spottedPlates={spottedPlates}
               onSpot={handleSpotPlate}
+              onUnspot={handleUnspotPlate}
               currentPlayerId={player?.playerId}
               isActive={isActive}
             />
